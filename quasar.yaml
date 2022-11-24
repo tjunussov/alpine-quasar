@@ -1,0 +1,34 @@
+################################################################################
+# Node-RED Stack or Compose
+################################################################################
+# docker stack deploy node-red --compose-file docker-compose-node-red.yml
+# docker-compose -f docker-compose-node-red.yml -p myNoderedProject up
+################################################################################
+# sudo docker-compose -p quasar -f quasar.yaml up -d
+version: "3.7"
+
+services:
+  quasar:
+    image: tjunussov/alpine-quasar:latest
+    container_name: quasar
+    environment:
+      - LETSENCRYPT_HOST=app.${BASE_DOMAIN}
+      - VIRTUAL_HOST=app.${BASE_DOMAIN}
+      - VIRTUAL_PORT=8080
+      - HTTPS_METHOD=noredirect
+    ports:
+     - "8080:8080"
+    restart: on-failure
+    # entrypoint: tail -f /dev/null
+    entrypoint: quasar dev
+    networks:
+      - nginx
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./quasar-data://home/alpine/project
+
+networks:
+  nginx:
+    external: true

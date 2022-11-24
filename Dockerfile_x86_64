@@ -1,0 +1,16 @@
+ARG ARCH=frommakefile
+ARG DOCKERSRC=frommakefile
+ARG USERNAME=frommakefile
+#
+FROM mhart/alpine-node:12.22
+#
+# building from vue which drops user to 
+# alpine so need to elevate it
+USER root
+RUN set -xe \
+    && npm install -g @quasar/cli cordova \
+    && rm -rf /var/cache/apk/* /tmp/*
+# VOLUME /home/alpine/project/ # specify at runtime
+#USER alpine
+WORKDIR /home/alpine/project/
+ENTRYPOINT ["quasar"]
